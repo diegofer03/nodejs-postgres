@@ -1,28 +1,41 @@
 const express = require('express')
 const router = express.Router()
 
-const faker = require('faker')
+const CategoriesService = require('../../services/categories')
+const validatorHandle = require('../../middlewares/validatorHandler')
+const { createCategorySchema, getCategorySchema } = require('../../schemas/category')
+const service = new CategoriesService()
 
-router.get("/", (req,res)=>{
-  res.json([
-    {
-      name: faker.commerce.productAdjective(),
-    },
-    {
-      name: faker.commerce.productAdjective(),
-    }
-  ])
+router.get("/", async (req,res, next)=>{
+  try {
+    const category = await service.findAll()
+    res.json(category)
+  } catch (error) {
+    next(error)
+  }
 })
 
-router.get("/:id", (req,res)=>{
-  const {id} = req.params
+router.get("/:id", validatorHandle(getCategorySchema, 'params'), async (req,res, next)=>{
+  try {
+    const {id} = req.params
+    const category = await service.findOne(id)
+    res.json(category)
+  } catch (error) {
+    next(error)
+  }
+})
 
-  res.json(
-    {
-      id: id,
-      name: faker.commerce.productAdjective(),
-    }
-  )
+router.post("/", validatorHandle(createCategorySchema, 'body'), async (req, res, next) => {
+  try {
+    const body = req.body
+    const category = await service.create(body)
+    res.json({
+      message: 'category created',
+      data: category
+    })
+  } catch (error) {
+    next(error)
+  }
 })
 
 router.get("/:categoryId/prodcuts/:prodcutId", (req,res)=>{

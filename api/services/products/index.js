@@ -1,41 +1,29 @@
 const boom = require('@hapi/boom')
-const faker = require('faker')
+// const pool = require('../../lib/postgres.pool')
+const {models} = require('./../../lib/sequeliza')
+
 
 class ProductsService {
   constructor(){
-    this.products = []
     this.generate()
+    // this.pool = pool
+    // //manejo de error por parte del pool
+    // this.pool.on('error', (err)=>{console.log(err)})
   }
 
   generate(){
-    const size =  10
-    for(let i = 0; i < size; i++){
-      this.products.push({
-        id: faker.datatype.uuid(),
-        name: faker.commerce.productName(),
-        price: parseInt( faker.commerce.price(),10),
-        image: faker.image.imageUrl()
-      })
-    }
   }
 
-  create(data){
-    const newProduct = {
-      id : faker.datatype.uuid(),
-      ... data
-    }
-    this.products.push(newProduct)
-    return newProduct
-
+  async create(data){
+    const product = await models.products.create(data)
+    return product
   }
 
-  async find(){
-    // eslint-disable-next-line no-unused-vars
-    return new Promise((resolve, reject)=>{
-      setTimeout(()=>{
-        resolve(this.products)
-      }, 2000)
-    });
+  async findAll(){
+    const product = await models.products.findAll({
+      include: ['category']
+    })
+    return product;
   }
 
   findOne(id){

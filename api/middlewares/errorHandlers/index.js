@@ -13,6 +13,17 @@ function errorHandler(err, req, res, next) { //así no se utilice next en el có
   })
 }
 
+function queryErrorHandler(err, req, res, next) {
+  if (err.parent) {
+    const { fields, parent } = err;
+    res.status(500).json({
+      field: fields,
+      message: parent.detail,
+    });
+  }
+  next(err);
+}
+
 // eslint-disable-next-line no-unused-vars
 function boomErrorHandler(err, req, res, next) { //así no se utilice next en el código se debe poner aqui, ya que un middleware de error tiene los cuatro parámetros
   if(err.isBoom){
@@ -23,4 +34,4 @@ function boomErrorHandler(err, req, res, next) { //así no se utilice next en el
   }
 }
 
-module.exports = { logErrors, errorHandler, boomErrorHandler }; //exportarlo como modulo
+module.exports = { logErrors, errorHandler, queryErrorHandler, boomErrorHandler }; //exportarlo como modulo
