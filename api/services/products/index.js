@@ -1,7 +1,7 @@
 const boom = require('@hapi/boom')
 // const pool = require('../../lib/postgres.pool')
 const {models} = require('./../../lib/sequeliza')
-
+const { Op } = require('sequelize')
 
 class ProductsService {
   constructor(){
@@ -19,10 +19,27 @@ class ProductsService {
     return product
   }
 
-  async findAll(){
-    const product = await models.products.findAll({
-      include: ['category']
-    })
+  async findAll(query){
+    const options = {
+      include: ['category'],
+      where: {}
+    }
+    const { limit, page } = query;
+    if (limit && page) {
+      options.limit = limit;
+      options.offset = limit * (page - 1);
+    }
+
+    const {price} = query
+    if(price) options.where.price = price
+
+    const {minPrice, maxPrice} = query
+    if (minPrice && maxPrice) {
+      options.where.price = {
+        [Op.between]: [minPrice, maxPrice]
+      };
+    }
+    const product = await models.products.findAll(options)
     return product;
   }
 
