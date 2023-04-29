@@ -1,7 +1,8 @@
 const express = require('express');
 const { logErrors, errorHandler, queryErrorHandler, boomErrorHandler } = require('./middlewares/errorHandlers');
 const cors = require('cors');
-const routerApi = require('./routes')
+const routerApi = require('./routes');
+const { checkApiKey } = require('./middlewares/authHandler');
 const app = express()
 
 const port = process.env.PORT || 3000;
@@ -10,7 +11,7 @@ app.use(express.json())
 
 app.use(cors())
 
-app.get("/", (req,res)=>{
+app.get("/", checkApiKey, (req,res)=>{
   res.send("Hola mundo en express")
 })
 
