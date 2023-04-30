@@ -3,9 +3,27 @@ const express = require('express');
 const OrderService = require('../../services/orders');
 const validatorHandle = require('../../middlewares/validatorHandler');
 const { getOrderSchema, createOrderSchema, addItemSchema } = require('../../schemas/order');
-
+const passport = require('passport');
 const router = express.Router();
 const service = new OrderService();
+
+// const OrderService = require('../../services/orders');
+
+// const router = express.Router();
+// const service = new OrderService();
+
+router.get('/myorders',
+  passport.authenticate('jwt', {session: false}),
+  async (req, res, next) => {
+    try {
+      const user = req.user;
+      const orders = await service.findByUser(user.sub);
+      res.json(orders);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
 router.get(
   '/:id',
