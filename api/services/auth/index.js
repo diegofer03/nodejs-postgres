@@ -12,14 +12,14 @@ class AuthService {
 
   async getUser(email, password) {
     const user = await userService.findByEmail(email);
-      if (!user) {
-        throw (boom.unauthorized(), false);
-      }
-      const isMatch = await bcrypt.compare(password, user.password);
-      if (!isMatch) {
-        throw (boom.unauthorized(), false);
-      }
-      delete user.dataValues.password;
+    if (!user) {
+      throw (boom.unauthorized(), false);
+    }
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      throw (boom.unauthorized(), false);
+    }
+    delete user.dataValues.password;
     return user;
   }
 

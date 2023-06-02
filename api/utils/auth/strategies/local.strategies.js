@@ -9,7 +9,9 @@ const LocalStrategy = new Strategy({
   },
   async (email, password, done) => {
     try {
-      const user = service.getUser(email, password)
+      const user = await service.getUser(email, password)
+      // console.log(email)
+      // console.log(password)
       done(null, user);
     } catch (error) {
       done(error, false);

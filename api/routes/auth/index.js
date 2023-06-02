@@ -10,8 +10,7 @@ router.post('/login',
   async (req, res, next) => {
     try {
       const user = req.user
-      const data = service.signToken(user)
-      res.json(data);
+      res.json(service.signToken(user));
     } catch (error) {
       next(error);
     }

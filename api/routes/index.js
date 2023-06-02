@@ -1,5 +1,4 @@
 const express = require('express')
-const expressListRoutes = require('express-list-routes');
 
 const productsRouter = require('./products')
 const categoriesRouter = require('./categories')
@@ -18,9 +17,8 @@ function routerApi(app){
   router.use('/customer', customerRouter)
   router.use('/orders', orderRouter)
   router.use('/auth', authRouter)
-  router.use('./profile', profileRouter)
+  router.use('/profile', profileRouter)
 
-  expressListRoutes(router, { prefix: '/api/v1' });
 }
 
 module.exports = routerApi;
